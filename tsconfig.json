@@ -7,9 +7,8 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-    // REMOVE "types": [] entirely OR
-    // "types": ["react", "react-dom", "node"]
+    "forceConsistentCasingInFileNames": true,
+    "types": ["json-schema"],
   },
   "include": ["src"]
 }
