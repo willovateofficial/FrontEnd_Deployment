@@ -8,7 +8,9 @@ import {
   XMarkIcon,
   PencilIcon,
   CheckIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
+import Loader from "./Loader";
 
 type InventoryItem = {
   id: number;
@@ -58,6 +60,7 @@ const InventoryPage = () => {
 
   const handleAddStock = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     const token = localStorage.getItem("token");
 
     try {
@@ -78,11 +81,14 @@ const InventoryPage = () => {
     } catch (err) {
       toast.error("Failed to add item");
       console.error("Add error:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleEditSubmit = async (e: React.FormEvent, id: number) => {
     e.preventDefault();
+    setIsLoading(true);
     const token = localStorage.getItem("token");
 
     try {
@@ -103,6 +109,26 @@ const InventoryPage = () => {
     } catch (err) {
       toast.error("Failed to update item");
       console.error("Update error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteItem = async (id: number) => {
+    setIsLoading(true);
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.delete(`${baseUrl}/api/inventory/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchInventory();
+      toast.success("Item deleted successfully");
+    } catch (err) {
+      toast.error("Failed to delete item");
+      console.error("Delete error:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -259,11 +285,7 @@ const InventoryPage = () => {
         {/* Inventory List */}
         <div className="bg-white rounded-lg sm:rounded-xl shadow-md border border-gray-100">
           {isLoading ? (
-            <div className="p-4 sm:p-6 text-center">
-              <div className="flex justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 border-t-2 border-b-2 border-orange-500"></div>
-              </div>
-            </div>
+            <Loader />
           ) : inventory.length === 0 ? (
             <div className="p-4 sm:p-6 text-center text-gray-500 text-xs sm:text-sm">
               No inventory items found. Add your first item to get started.
@@ -341,20 +363,30 @@ const InventoryPage = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-center text-sm sm:text-md font-medium">
-                            <button
-                              onClick={() => {
-                                setEditingId(item.id);
-                                setEditItem({
-                                  name: item.name,
-                                  quantity: item.quantity.toString(),
-                                  unit: item.unit,
-                                  threshold: item.threshold.toString(),
-                                });
-                              }}
-                              className="text-orange-600 hover:text-orange-800 flex items-center justify-center mx-auto"
-                            >
-                              <PencilIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" /> Edit
-                            </button>
+                            <div className="flex justify-center space-x-4">
+                              <button
+                                onClick={() => {
+                                  setEditingId(item.id);
+                                  setEditItem({
+                                    name: item.name,
+                                    quantity: item.quantity.toString(),
+                                    unit: item.unit,
+                                    threshold: item.threshold.toString(),
+                                  });
+                                }}
+                                className="text-orange-600 hover:text-orange-800 flex items-center"
+                              >
+                                <PencilIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />{" "}
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteItem(item.id)}
+                                className="text-red-600 hover:text-red-800 flex items-center"
+                              >
+                                <TrashIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />{" "}
+                                Delete
+                              </button>
+                            </div>
                           </td>
                         </tr>
 
@@ -589,20 +621,28 @@ const InventoryPage = () => {
                           <h3 className="text-sm font-bold text-gray-900">
                             {item.name}
                           </h3>
-                          <button
-                            onClick={() => {
-                              setEditingId(item.id);
-                              setEditItem({
-                                name: item.name,
-                                quantity: item.quantity.toString(),
-                                unit: item.unit,
-                                threshold: item.threshold.toString(),
-                              });
-                            }}
-                            className="text-orange-600 hover:text-orange-800 flex items-center text-xs"
-                          >
-                            <PencilIcon className="h-3 w-3 mr-1" /> Edit
-                          </button>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => {
+                                setEditingId(item.id);
+                                setEditItem({
+                                  name: item.name,
+                                  quantity: item.quantity.toString(),
+                                  unit: item.unit,
+                                  threshold: item.threshold.toString(),
+                                });
+                              }}
+                              className="text-orange-600 hover:text-orange-800 flex items-center text-xs"
+                            >
+                              <PencilIcon className="h-3 w-3 mr-1" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(item.id)}
+                              className="text-red-600 hover:text-red-800 flex items-center text-xs"
+                            >
+                              <TrashIcon className="h-3 w-3 mr-1" /> Delete
+                            </button>
+                          </div>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <div>

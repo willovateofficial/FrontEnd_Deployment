@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import HeroBanner from "./HeroBanner";
 import PopularCategories from "./PopularCategories";
-import homeBannerImg from "../../assets/restrobg.png";
+import homeBannerImg from "../../assets/restrobg.png"; // Ensure this path is correct and image is high-res
 
 const Home = () => {
   const location = useLocation();
@@ -27,7 +27,8 @@ const Home = () => {
           alt="Background"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black opacity-40"></div>
+        {/* Increased opacity slightly for better text contrast */}
+        <div className="absolute inset-0 bg-black opacity-60"></div>
       </div>
 
       <div className="relative z-10 space-y-8 p-4 md:p-6">

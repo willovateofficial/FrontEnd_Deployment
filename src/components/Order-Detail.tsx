@@ -27,6 +27,8 @@ interface Order {
 
 const baseURL = baseUrl;
 
+// ... (previous imports and interfaces remain unchanged)
+
 const OrderDetails: React.FC = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
@@ -68,11 +70,9 @@ const OrderDetails: React.FC = () => {
     }
   };
 
-  // Function to update individual item status
   const updateItemStatus = async (itemIndex: number, newStatus: string) => {
     if (!order) return;
 
-    // Add item to updating set
     setUpdatingItems((prev) => new Set(prev).add(itemIndex));
 
     try {
@@ -80,7 +80,6 @@ const OrderDetails: React.FC = () => {
       const token = localStorage.getItem("token");
       const item = order.items[itemIndex];
 
-      // API call to update individual item status
       await axios.patch(
         `${baseURL}/api/orders/${numericId}/items/${item.productId}/status`,
         {
@@ -93,14 +92,12 @@ const OrderDetails: React.FC = () => {
         }
       );
 
-      // Update local state
       const updatedItems = [...order.items];
       updatedItems[itemIndex] = {
         ...updatedItems[itemIndex],
         status: newStatus,
       };
 
-      // Calculate overall order status based on items
       const allItemsCompleted = order.items.every(
         (item) => item.status === "Completed"
       );
@@ -113,12 +110,11 @@ const OrderDetails: React.FC = () => {
       };
 
       setOrder(updatedOrder);
-      toast.success(`✅ Item status updated to ${newStatus}`);
+      toast.success(`Item status updated to ${newStatus}`);
     } catch (error) {
       console.error("Failed to update item status", error);
-      toast.error("❌ Failed to update item status. Please try again.");
+      toast.error("Failed to update item status. Please try again.");
     } finally {
-      // Remove item from updating set
       setUpdatingItems((prev) => {
         const newSet = new Set(prev);
         newSet.delete(itemIndex);
@@ -127,7 +123,6 @@ const OrderDetails: React.FC = () => {
     }
   };
 
-  // Function to update all items to completed
   const handleCompleteAllItems = async () => {
     if (!order) return;
 
@@ -137,7 +132,6 @@ const OrderDetails: React.FC = () => {
       const numericId = parseInt(order.order_id.replace("ORD", ""), 10);
       const token = localStorage.getItem("token");
 
-      // API call to update all items to served
       await axios.patch(
         `${baseURL}/api/orders/${numericId}/complete-all`,
         {},
@@ -148,7 +142,6 @@ const OrderDetails: React.FC = () => {
         }
       );
 
-      // Update local state
       const updatedItems = order.items.map((item) => ({
         ...item,
         status: "Completed",
@@ -161,10 +154,10 @@ const OrderDetails: React.FC = () => {
       };
 
       setOrder(updatedOrder);
-      toast.success("✅ All items marked as completed!");
+      toast.success("All items marked as completed!");
     } catch (error) {
       console.error("Failed to complete all items", error);
-      toast.error("❌ Failed to complete all items. Please try again.");
+      toast.error("Failed to complete all items. Please try again.");
     } finally {
       setUpdating(false);
     }
@@ -173,19 +166,15 @@ const OrderDetails: React.FC = () => {
   const handleProceedToBilling = async () => {
     if (!order) return;
 
-    // Check if all items are served
     const allItemsCompleted = order.items.every(
       (item) => item.status === "Completed"
     );
 
     if (!allItemsCompleted) {
-      toast.warning(
-        "⚠️ Please complete all items before proceeding to billing"
-      );
+      toast.warning("Please complete all items before proceeding to billing");
       return;
     }
 
-    // Navigate to billing page
     navigate(`/bill/${order.order_id}`, { state: { order } });
   };
 
@@ -207,7 +196,6 @@ const OrderDetails: React.FC = () => {
     );
   }
 
-  // Calculate served items count
   const completedItemsCount = order.items.filter(
     (item) => item.status === "Completed"
   ).length;
@@ -219,8 +207,8 @@ const OrderDetails: React.FC = () => {
         {/* Header Section */}
         <div className="bg-[#060224] text-white px-6 py-4 rounded-xl shadow-lg mb-6">
           <div className="flex justify-between items-center">
-            <div className="text-xl font-bold">
-              🪑 Table No: {order.table_number}
+            <div className="text-2xl font-bold">
+              Table No: {order.table_number}
             </div>
             <div className="text-right">
               <div className="text-sm font-medium">{order.status}</div>
@@ -267,13 +255,13 @@ const OrderDetails: React.FC = () => {
 
         {/* Items Section Header */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-          <h2 className="text-lg font-semibold text-gray-700">
-            🧾 Items Ordered
+          <h2 className="text-3xl font-bold text-gray-700">
+            Items Ordered
           </h2>
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-row gap-2 w-full sm:w-auto sm:gap-3">
             <button
               onClick={() => setShowCart(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition duration-300"
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition duration-300 flex-1 sm:flex-none"
             >
               Edit Order
             </button>
@@ -284,7 +272,7 @@ const OrderDetails: React.FC = () => {
                 updating || completedItemsCount === totalItemsCount
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-600 hover:bg-green-700"
-              } text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition duration-300`}
+              } text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition duration-300 flex-1 sm:flex-none`}
             >
               {updating ? "Processing..." : "Order Complete"}
             </button>
@@ -376,7 +364,7 @@ const OrderDetails: React.FC = () => {
             image: "",
             quantity: item.quantity,
             price: item.price,
-            status: item.status || "Pending", // ✅ Add this line
+            status: item.status || "Pending",
           }))}
           orderId={order.order_id}
           onClose={() => setShowCart(false)}

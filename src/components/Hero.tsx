@@ -93,26 +93,23 @@ export default function Hero() {
           </motion.p>
 
           {/* Animated buttons */}
+          {/* Animated buttons */}
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mb-12"
           >
-            <button
+            <a
+              href="plan-section" // direct jump without smooth scroll
               className="group relative overflow-hidden bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-medium py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2"
-              onClick={() =>
-                document
-                  .getElementById("plan-section")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
             >
               <span>Get Started</span>
               <BsArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
               <div className="absolute inset-0 bg-white/10 group-hover:bg-white/0 transition-all duration-500"></div>
-            </button>
-            
-            <Link to="/demo"> {/* Changed href to to */}
+            </a>
+
+            <Link to="/demo">
               <button className="group relative overflow-hidden border border-amber-500 text-amber-600 hover:bg-amber-50 font-medium py-3 px-8 rounded-lg transition-all duration-300 flex items-center gap-2">
                 <span>Watch Demo</span>
                 <BsPlayFill className="transition-transform duration-300 group-hover:scale-110" />

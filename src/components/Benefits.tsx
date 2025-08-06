@@ -1,15 +1,15 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { 
-  FaUsers, 
-  FaClock, 
-  FaQrcode, 
+import {
+  FaClock,
+  FaQrcode,
   FaChartLine,
   FaUtensils,
   FaMoneyBillWave,
-  FaMobileAlt
+  FaMobileAlt,
 } from "react-icons/fa";
-import { FiCheckCircle, FiAward } from "react-icons/fi";
+import { FiAward } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const RestaurantBenefits = () => {
   // Timeline Data
@@ -18,26 +18,26 @@ const RestaurantBenefits = () => {
       title: "Digital Ordering",
       description: "Guests browse your menu digitally via QR codes",
       icon: <FaQrcode className="text-amber-500" />,
-      stat: "80% faster ordering"
+      stat: "80% faster ordering",
     },
     {
       title: "Kitchen Sync",
       description: "Orders reach kitchen in real-time",
       icon: <FaUtensils className="text-orange-500" />,
-      stat: "0 communication errors"
+      stat: "0 communication errors",
     },
     {
       title: "Automated Billing",
       description: "Seamless payment integration",
       icon: <FaMoneyBillWave className="text-red-500" />,
-      stat: "2.5x faster checkout"
+      stat: "2.5x faster checkout",
     },
     {
       title: "Customer Insights",
       description: "Data-driven menu optimization",
       icon: <FaChartLine className="text-amber-600" />,
-      stat: "22% higher spend"
-    }
+      stat: "22% higher spend",
+    },
   ];
 
   // Comparison Data
@@ -46,33 +46,34 @@ const RestaurantBenefits = () => {
       "15+ min wait times",
       "8-12% order errors",
       "Limited customer data",
-      "Manual inventory tracking"
+      "Manual inventory tracking",
     ],
     after: [
       "Under 5 min service time",
       "Near-zero order errors",
       "Rich customer analytics",
-      "Automated inventory"
-    ]
+      "Automated inventory",
+    ],
   };
 
   // Magazine Feature Data
   const magazineFeatures = [
     {
       title: "Dynamic Pricing",
-      description: "Automatically adjust specials based on inventory and demand",
-      borderColor: "border-amber-500"
+      description:
+        "Automatically adjust specials based on inventory and demand",
+      borderColor: "border-amber-500",
     },
     {
       title: "Loyalty Integration",
       description: "Seamless rewards program increases repeat visits by 40%",
-      borderColor: "border-orange-500"
+      borderColor: "border-orange-500",
     },
     {
       title: "Kitchen Display",
       description: "Prioritize orders automatically during rush hours",
-      borderColor: "border-red-500"
-    }
+      borderColor: "border-red-500",
+    },
   ];
 
   return (
@@ -83,9 +84,9 @@ const RestaurantBenefits = () => {
           <div className="absolute top-20 -left-20 w-64 h-64 rounded-full bg-amber-300 blur-[100px]"></div>
           <div className="absolute bottom-10 -right-20 w-72 h-72 rounded-full bg-orange-300 blur-[120px]"></div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-6 relative">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -100,7 +101,8 @@ const RestaurantBenefits = () => {
               </span>
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Transform your restaurant operations with our all-in-one digital platform trusted by 500+ establishments worldwide
+              Transform your restaurant operations with our all-in-one digital
+              platform trusted by 500+ establishments worldwide
             </p>
           </motion.div>
 
@@ -108,9 +110,9 @@ const RestaurantBenefits = () => {
           <div className="mt-24">
             <div className="hidden md:flex justify-between relative">
               <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-amber-200 to-transparent z-0"></div>
-              
+
               {processSteps.map((step, i) => (
-                <motion.div 
+                <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -121,7 +123,9 @@ const RestaurantBenefits = () => {
                   <div className="mx-auto mb-6 w-20 h-20 rounded-full bg-white border-2 border-amber-100 flex items-center justify-center shadow-sm hover:shadow-md transition-all">
                     <div className="text-2xl">{step.icon}</div>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{step.title}</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {step.title}
+                  </h3>
                   <p className="text-gray-600 mb-3">{step.description}</p>
                   <span className="inline-block px-3 py-1 text-sm font-medium rounded-full bg-amber-100 text-amber-800">
                     {step.stat}
@@ -138,7 +142,9 @@ const RestaurantBenefits = () => {
                     <div className="text-xl">{step.icon}</div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{step.title}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      {step.title}
+                    </h3>
                     <p className="text-gray-600 mb-2">{step.description}</p>
                     <span className="inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-amber-100 text-amber-800">
                       {step.stat}
@@ -162,10 +168,12 @@ const RestaurantBenefits = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Traditional vs. <span className="text-amber-600">Digital</span> Experience
+              Traditional vs. <span className="text-amber-600">Digital</span>{" "}
+              Experience
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              See the measurable impact our solution makes across key operational areas
+              See the measurable impact our solution makes across key
+              operational areas
             </p>
           </motion.div>
 
@@ -181,12 +189,19 @@ const RestaurantBenefits = () => {
                 <div className="inline-flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-red-50">
                   <FaClock className="text-2xl text-red-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Traditional Service</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Traditional Service
+                </h3>
               </div>
               <ul className="space-y-3">
                 {comparisonData.before.map((item, i) => (
-                  <li key={i} className="flex items-start py-2 border-b border-gray-100 last:border-0">
-                    <span className="flex-shrink-0 mt-1 mr-3 text-red-500">✗</span>
+                  <li
+                    key={i}
+                    className="flex items-start py-2 border-b border-gray-100 last:border-0"
+                  >
+                    <span className="flex-shrink-0 mt-1 mr-3 text-red-500">
+                      ✗
+                    </span>
                     <span className="text-gray-700">{item}</span>
                   </li>
                 ))}
@@ -207,12 +222,19 @@ const RestaurantBenefits = () => {
                 <div className="inline-flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-amber-50">
                   <FaMobileAlt className="text-2xl text-amber-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900">Digital Experience</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Digital Experience
+                </h3>
               </div>
               <ul className="space-y-3">
                 {comparisonData.after.map((item, i) => (
-                  <li key={i} className="flex items-start py-2 border-b border-amber-50 last:border-0">
-                    <span className="flex-shrink-0 mt-1 mr-3 text-green-500">✓</span>
+                  <li
+                    key={i}
+                    className="flex items-start py-2 border-b border-amber-50 last:border-0"
+                  >
+                    <span className="flex-shrink-0 mt-1 mr-3 text-green-500">
+                      ✓
+                    </span>
                     <span className="text-gray-700">{item}</span>
                   </li>
                 ))}
@@ -240,13 +262,18 @@ const RestaurantBenefits = () => {
                   <span className="inline-block px-3 py-1 mb-4 bg-white/20 backdrop-blur-sm rounded-full text-sm">
                     FLAGSHIP FEATURE
                   </span>
-                  <h2 className="text-3xl font-bold mb-4">Intelligent Menu Recommendations</h2>
+                  <h2 className="text-3xl font-bold mb-4">
+                    Intelligent Menu Recommendations
+                  </h2>
                   <p className="max-w-lg">
-                    Our Product analyzes ordering patterns to suggest menu optimizations that increase average order value by 22%.
+                    Our Product analyzes ordering patterns to suggest menu
+                    optimizations that increase average order value by 22%.
                   </p>
-                  <button className="mt-6 px-6 py-2 bg-white text-amber-600 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                    Learn More
-                  </button>
+                  <Link to="/how-it-works">
+                    <button className="mt-6 px-6 py-2 bg-white text-amber-600 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                      Learn More
+                    </button>
+                  </Link>
                 </div>
               </div>
             </motion.div>
@@ -262,7 +289,9 @@ const RestaurantBenefits = () => {
                   viewport={{ once: true }}
                   className={`border-l-4 ${feature.borderColor} pl-6 py-4 hover:bg-gray-50 rounded-r-lg transition-colors`}
                 >
-                  <h3 className="text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-900">
+                    {feature.title}
+                  </h3>
                   <p className="text-gray-600">{feature.description}</p>
                 </motion.div>
               ))}
@@ -278,8 +307,12 @@ const RestaurantBenefits = () => {
                 <div className="inline-flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-full bg-amber-100 text-amber-600">
                   <FiAward className="text-xl" />
                 </div>
-                <h4 className="font-medium text-gray-900 mb-1">Award-Winning Technology</h4>
-                <p className="text-sm text-gray-600">2023 Hospitality Innovation Award</p>
+                <h4 className="font-medium text-gray-900 mb-1">
+                  Award-Winning Technology
+                </h4>
+                <p className="text-sm text-gray-600">
+                  2023 Hospitality Innovation Award
+                </p>
               </motion.div>
             </div>
           </div>
@@ -298,9 +331,11 @@ const RestaurantBenefits = () => {
               className="p-6"
             >
               <div className="text-4xl font-bold text-amber-400 mb-2">30%</div>
-              <div className="text-sm text-gray-300 uppercase tracking-wider">Labor Cost Reduction</div>
+              <div className="text-sm text-gray-300 uppercase tracking-wider">
+                Labor Cost Reduction
+              </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -309,9 +344,11 @@ const RestaurantBenefits = () => {
               className="p-6"
             >
               <div className="text-4xl font-bold text-orange-400 mb-2">40%</div>
-              <div className="text-sm text-gray-300 uppercase tracking-wider">Faster Service</div>
+              <div className="text-sm text-gray-300 uppercase tracking-wider">
+                Faster Service
+              </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -320,9 +357,11 @@ const RestaurantBenefits = () => {
               className="p-6"
             >
               <div className="text-4xl font-bold text-red-400 mb-2">4.8/5</div>
-              <div className="text-sm text-gray-300 uppercase tracking-wider">Customer Rating</div>
+              <div className="text-sm text-gray-300 uppercase tracking-wider">
+                Customer Rating
+              </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -331,7 +370,9 @@ const RestaurantBenefits = () => {
               className="p-6"
             >
               <div className="text-4xl font-bold text-amber-300 mb-2">500+</div>
-              <div className="text-sm text-gray-300 uppercase tracking-wider">Happy Restaurants</div>
+              <div className="text-sm text-gray-300 uppercase tracking-wider">
+                Happy Restaurants
+              </div>
             </motion.div>
           </div>
         </div>

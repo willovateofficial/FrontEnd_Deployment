@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import FoodImg from "../../assets/food-img.jpg";
+import { baseUrl } from "../../config";
 
 interface CusLoginProps {
   onRegisterClick: () => void;
@@ -15,28 +16,33 @@ interface LoginFormData {
   password: string;
 }
 
+const baseURL = baseUrl;
+
 const CusLogin: React.FC<CusLoginProps> = ({ onRegisterClick, onClose }) => {
   const { register, handleSubmit, reset } = useForm<LoginFormData>();
   const navigate = useNavigate();
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const businessId = 1; // 🔁 Update this if needed dynamically
+      const businessId = localStorage.getItem("businessId"); 
       const res = await axios.post(
-        "http://localhost:4000/api/customers/login",
+        `${baseURL}/api/customers/login`,
         {
           ...data,
-          businessId,
+          businessId: Number(businessId),
         }
       );
 
+      // ✅ Store token and customer details
       localStorage.setItem("customerToken", res.data.token);
+      localStorage.setItem("customerId", res.data.customer.customerId); // 👈 Store unique customerId
+
       toast.success("Logged in successfully");
       reset();
       onClose(); // close modal
-      navigate("/restaurant"); // ✅ redirect
+      navigate("/restaurant");
     } catch (err: any) {
-      toast.error("Invalid email or password"); // ✅ show error message
+      toast.error("Invalid email or password");
     }
   };
 

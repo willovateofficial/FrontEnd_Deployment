@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Home from "./components/user/Home";
 import Layout from "./components/Layout";
 import CategoryPage from "./components/CategoryPage";
@@ -41,14 +41,28 @@ import TableView from "./components/TableView";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import PendingVerification from "./components/pendingVerification";
-
 import ForgotPassword from "./components/forgotPassword";
-
 import AddCouponPage from "./components/AddCouponPage";
-
-import DemoVideoPage from "./components/DemoVideoPage";     
+import DemoVideoPage from "./components/DemoVideoPage";
+import MainMenu from "./components/MainMenu";
+import CusProfile from "./components/user/CusProfile";
+import CustomerList from "./components/CustomerList";
+import { CustomerProtectedRoute } from "./components/common/CustomerProtectedRoute";
+import NoAccessPage from "./components/NoAccesspage";
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const planStatus = localStorage.getItem("plan_status");
+
+    if (token && planStatus === "active" && location.pathname === "/") {
+      navigate("/main", { replace: true });
+    }
+  }, [location.pathname, navigate]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ToastContainer position="top-center" autoClose={3000} />
@@ -69,12 +83,21 @@ function App() {
 
           {/* QR Code redirect */}
           <Route path="/r/:data" element={<QrRedirect />} />
-          <Route path="/inventory" element={<InventoryPage />} />
         </Route>
 
         <Route path="/payment-waiting" element={<PaymentWaitingPage />}></Route>
-
-        {/* <Route path="/pending-verification" element={<PendingVerification />} /> */}
+        <Route path="/" element={<Layout />}>
+          ...
+          {/* Customer Protected Route (keep here with public and customer routes) */}
+          <Route
+            path="/cus-profile"
+            element={
+              <CustomerProtectedRoute>
+                <CusProfile />
+              </CustomerProtectedRoute>
+            }
+          />
+        </Route>
 
         {/* Auth routes */}
         <Route path="/login" element={<Login />} />
@@ -101,6 +124,14 @@ function App() {
             }
           />
           <Route
+            path="/main"
+            element={
+              <ProtectedRoute allowedRoles={["owner", "manager", "admin"]}>
+                <MainMenu />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin-profile"
             element={
               <ProtectedRoute
@@ -121,6 +152,15 @@ function App() {
           />
 
           <Route
+            path="/inventory"
+            element={
+              <ProtectedRoute allowedRoles={["owner", "manager", "admin"]}>
+                <InventoryPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/admin-menu-list"
             element={
               <ProtectedRoute
@@ -134,18 +174,25 @@ function App() {
           <Route
             path="/payment"
             element={
-              <ProtectedRoute allowedRoles={["admin", "user", "owner"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "user", "owner"]}
+                skipPlanCheck={true}
+              >
                 <PaymentButton />
               </ProtectedRoute>
             }
           />
 
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/no-access" element={<NoAccessPage />} />
 
           <Route
             path="/plancheckoutpage"
             element={
-              <ProtectedRoute allowedRoles={["admin", "user", "owner"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "user", "owner"]}
+                skipPlanCheck={true}
+              >
                 <PlanCheckoutPage />
               </ProtectedRoute>
             }
@@ -154,7 +201,10 @@ function App() {
           <Route
             path="/sucesspage"
             element={
-              <ProtectedRoute allowedRoles={["admin", "user", "owner"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "user", "owner"]}
+                skipPlanCheck={true}
+              >
                 <SuccessPage />
               </ProtectedRoute>
             }
@@ -212,6 +262,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/customer-list"
+            element={
+              <ProtectedRoute allowedRoles={["owner", "manager", "admin"]}>
+                <CustomerList />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/add-coupon"
@@ -225,7 +283,10 @@ function App() {
           <Route
             path="/t&c"
             element={
-              <ProtectedRoute allowedRoles={["admin", "user", "owner"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "user", "owner"]}
+                skipPlanCheck={true}
+              >
                 <TermsAndConditions />
               </ProtectedRoute>
             }
@@ -234,7 +295,10 @@ function App() {
           <Route
             path="/privacy-policy"
             element={
-              <ProtectedRoute allowedRoles={["admin", "user", "owner"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "user", "owner"]}
+                skipPlanCheck={true}
+              >
                 <PrivacyPolicy />
               </ProtectedRoute>
             }
@@ -243,7 +307,10 @@ function App() {
           <Route
             path="/cancellation-policy"
             element={
-              <ProtectedRoute allowedRoles={["admin", "user", "owner"]}>
+              <ProtectedRoute
+                allowedRoles={["admin", "user", "owner"]}
+                skipPlanCheck={true}
+              >
                 <CancellationPolicy />
               </ProtectedRoute>
             }

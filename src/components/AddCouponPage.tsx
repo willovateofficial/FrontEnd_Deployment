@@ -3,6 +3,7 @@ import axios from "axios";
 import { baseUrl } from "../config";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../components/Loader"; // adjust path if needed
 
 const AddCouponPage: React.FC = () => {
   const [coupons, setCoupons] = useState([]);
@@ -11,6 +12,7 @@ const AddCouponPage: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteCouponId, setDeleteCouponId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     code: "",
@@ -26,10 +28,18 @@ const AddCouponPage: React.FC = () => {
 
   const fetchCoupons = async () => {
     const token = localStorage.getItem("token");
-    const res = await axios.get(`${baseUrl}/api/coupons`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setCoupons(res.data || []);
+    try {
+      setIsLoading(true);
+      const res = await axios.get(`${baseUrl}/api/coupons`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCoupons(res.data || []);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      toast.error("Failed to fetch coupons");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -47,6 +57,7 @@ const AddCouponPage: React.FC = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
+      setIsLoading(true);
       if (editMode && editingId !== null) {
         await axios.put(`${baseUrl}/api/coupons/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` },
@@ -59,7 +70,6 @@ const AddCouponPage: React.FC = () => {
         toast.success("Coupon added successfully");
       }
 
-      // Reset form
       setFormData({
         code: "",
         discountType: "flat",
@@ -77,15 +87,17 @@ const AddCouponPage: React.FC = () => {
     } catch (err) {
       console.error("Coupon submit error:", err);
       toast.error("Failed to submit coupon");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDeleteCoupon = async () => {
     if (!deleteCouponId) return;
-
-    setIsDeleting(true);
     const token = localStorage.getItem("token");
     try {
+      setIsDeleting(true);
+      setIsLoading(true);
       await axios.delete(`${baseUrl}/api/coupons/${deleteCouponId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -97,12 +109,14 @@ const AddCouponPage: React.FC = () => {
       toast.error("Failed to delete coupon");
     } finally {
       setIsDeleting(false);
+      setIsLoading(false);
       setDeleteCouponId(null);
     }
   };
 
   return (
     <>
+      {isLoading && <Loader />}
       <div className="p-4 bg-white min-h-[calc(100vh-4rem)] flex justify-center">
         <div className="w-full max-w-6xl">
           {" "}

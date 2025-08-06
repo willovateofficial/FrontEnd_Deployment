@@ -39,7 +39,7 @@ const PlanCheckoutPage = () => {
           No plan selected. Please go back and choose a plan.
         </p>
         <button
-          onClick={() => navigate("/plans")}
+          onClick={() => navigate("/plan-section")}
           className="mt-6 px-6 py-3 bg-orange-600 text-white rounded-xl shadow-md hover:bg-orange-500 transition duration-300 text-sm sm:text-base"
         >
           Back to Plans
@@ -75,14 +75,21 @@ const PlanCheckoutPage = () => {
 
     if (!isValid) return;
 
+    // ✅ Calculate expiry date
+    const today = new Date();
+    const duration = plan.durationDays ?? 30; // Fallback if undefined
+    const expiresAt = new Date(today.setDate(today.getDate() + duration)).toISOString();
+
+    // Optional: store expiry in localStorage
+    // localStorage.setItem("planExpiresAt", expiresAt);
+
+    // Navigate with all required info
     navigate("/payment", {
       state: {
         planName: plan.name,
         price: plan.price,
         features: plan.features,
-        expiresAt: new Date(
-          new Date().setDate(new Date().getDate() + plan.durationDays)
-        ).toISOString(),
+        expiresAt,
       },
     });
   };

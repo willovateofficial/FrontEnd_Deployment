@@ -22,11 +22,14 @@ const Login = () => {
         const business = user.business;
         const businessId = business?.id;
         const planStatus = business?.plan?.status;
+        const plan = business?.plan?.name;
 
+        // ✅ Store in localStorage
         localStorage.setItem("authToken", token);
         localStorage.setItem("userEmail", user.email);
         localStorage.setItem("role", user.role.toLowerCase());
-        localStorage.setItem("plan_status", planStatus);
+        localStorage.setItem("plan_status", planStatus || "");
+        localStorage.setItem("plan", plan?.toLowerCase() || "");
 
         if (businessId) {
           localStorage.setItem("businessId", businessId.toString());
@@ -36,18 +39,17 @@ const Login = () => {
             return;
           }
 
-          // ✅ STRONG CONDITION: Only allow "active"
           if (planStatus === "active") {
-            navigate("/dashboard");
+            navigate("/main");
           } else {
             console.warn("Subscription not active. Redirecting to home.");
             navigate("/");
-            return; // 🛑 Strictly stop further flow
+            return;
           }
         } else {
           console.warn("No business ID found");
           navigate("/");
-          return; // 🛑 Strictly stop
+          return;
         }
       } else {
         console.error("No token returned");
@@ -66,7 +68,6 @@ const Login = () => {
       }}
     >
       <div className="absolute inset-0 bg-black bg-opacity-70 z-0" />
-
       <div className="absolute top-6 right-6 z-10">
         <h1 className="text-orange-400 text-3xl font-extrabold tracking-wider">
           WILLOVATE

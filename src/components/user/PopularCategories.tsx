@@ -6,6 +6,9 @@ import axios from "axios";
 import RegisterPage from "./RegisterPage";
 import CusLogin from "./CusLogin";
 import { motion, AnimatePresence } from "framer-motion";
+import { baseUrl } from "../../config"; // Adjust the import path as necessary
+
+const baseURL = baseUrl;
 
 const PopularCategories = () => {
   const navigate = useNavigate();
@@ -13,14 +16,15 @@ const PopularCategories = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
+  const businessId = localStorage.getItem("businessId");
+
   useEffect(() => {
     const fetchCustomerLogo = async () => {
-      const businessId = localStorage.getItem("businessId");
       if (!businessId) return;
 
       try {
         const res = await axios.get(
-          `http://localhost:4000/api/business/${businessId}`
+          `${baseURL}/api/business/${businessId}`
         );
         const logoUrl = res.data?.logoUrl;
         if (logoUrl) {
@@ -55,24 +59,38 @@ const PopularCategories = () => {
     const handleCustomerLoggedOut = () => {
       setShowLogin(true);
     };
+    const handleOpenLogin = () => setShowLogin(true);
 
     window.addEventListener("customer-logged-out", handleCustomerLoggedOut);
+    window.addEventListener("open-customer-login", handleOpenLogin);
 
     return () => {
       window.removeEventListener(
         "customer-logged-out",
         handleCustomerLoggedOut
       );
+      window.removeEventListener("open-customer-login", handleOpenLogin);
     };
   }, [location, navigate]);
 
-  const businessId = localStorage.getItem("businessId");
   const { data: categories = [], isLoading } = useCategories(businessId);
+
+  const showTopRightMessage =
+    !localStorage.getItem("customerToken") &&
+    !["owner", "manager", "staff"].includes(localStorage.getItem("role") || "");
 
   if (isLoading) return <div className="px-4">Loading...</div>;
 
   return (
     <section className="px-4 md:px-8 mt-6 relative">
+      {showTopRightMessage && (
+        <div
+          className="fixed top-16 right-2 z-50 bg-blue-100 text-black 
+               px-2.5 py-1 rounded shadow-md text-xs 
+               sm:text-sm sm:px-3 sm:py-1.5 sm:right-4 sm:top-20">
+          You are not logged in. You can refresh the page to login or signup.
+        </div>
+      )}
       {/* Login Popup */}
       <AnimatePresence>
         {showLogin && (
@@ -112,6 +130,7 @@ const PopularCategories = () => {
       <h3 className="text-lg md:text-2xl font-semibold mb-4 text-white">
         Popular Categories
       </h3>
+
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-9 mb-8">
         {categories.map((category) => {
           const imgSrc = category.imageUrl || defaultImage;

@@ -4,6 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { baseUrl } from "../config";
+import html2canvas from "html2canvas";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary";
 
 interface Item {
   productId: number;
@@ -44,6 +46,11 @@ const BillPage: React.FC = () => {
 
   const [business, setBusiness] = useState<Business | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showStoreModal, setShowStoreModal] = useState(false);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [cloudinaryLink, setCloudinaryLink] = useState("");
+  const token = localStorage.getItem("authToken");
 
   useEffect(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -99,6 +106,77 @@ const BillPage: React.FC = () => {
       </div>
     );
   }
+
+  const handleStoreBill = async () => {
+    setShowStoreModal(false);
+
+    try {
+      const receiptElement = document.getElementById("receipt");
+
+      if (!receiptElement) {
+        toast.error("Receipt element not found.");
+        return;
+      }
+
+      // Convert HTML to canvas
+      const canvas = await html2canvas(receiptElement);
+
+      // Convert canvas to Blob
+      canvas.toBlob(async (blob) => {
+        if (!blob) {
+          toast.error("Failed to generate image.");
+          return;
+        }
+
+        // Upload to Cloudinary
+        const file = new File([blob], "receipt.png", { type: "image/png" });
+        const uploadResult = await uploadToCloudinary(file);
+
+        if (uploadResult) {
+          const { url, publicId } = uploadResult;
+          toast.success("Uploaded to Cloudinary! 🎉");
+          console.log("Image URL:", url);
+          console.log("Public ID:", publicId);
+
+          const orderId =
+            typeof order.order_id === "string"
+              ? parseInt(order.order_id.replace("ORD", ""), 10)
+              : undefined;
+
+          if (!orderId || typeof orderId !== "number") {
+            console.error("❌ Invalid orderId:", order.order_id);
+            toast.error("Invalid Order ID. Cannot store bill.");
+            return;
+          }
+
+          // Store the bill info in the database
+          await axios.put(
+            `${baseUrl}/api/bill/${orderId}/store-link`,
+            {
+              billStoreLink: url,
+              cloudinaryPublicId: publicId,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setShowWhatsAppModal(true); // Open the modal
+          setCloudinaryLink(url); // set the link for WhatsApp modal
+
+          toast.success("Bill stored successfully!");
+          // After this, you can optionally show WhatsApp input modal here
+        } else {
+          toast.error("Upload failed");
+        }
+      });
+    } catch (error) {
+      console.error("Error in handleStoreBill:", error);
+      toast.error("Something went wrong!");
+    }
+  };
 
   const calculateAmount = (percent: number) =>
     (order.total_amount * percent) / 100;
@@ -298,6 +376,14 @@ const BillPage: React.FC = () => {
 
       {/* Print / Settings buttons */}
       <div style={styles.printSettingsContainer} className="no-print">
+        {localStorage.getItem("plan") === "standard" && (
+          <button
+            onClick={() => setShowStoreModal(true)}
+            style={{ ...styles.button, backgroundColor: "#007bff" }}
+          >
+            Send Bill on WhatsApp
+          </button>
+        )}
         <button
           onClick={handlePrint}
           style={{ ...styles.button, backgroundColor: "orange" }}
@@ -337,6 +423,68 @@ const BillPage: React.FC = () => {
           }
         `}
       </style>
+      {showStoreModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50"
+          onClick={() => setShowStoreModal(false)}
+        >
+          <div
+            className="bg-white p-6 rounded shadow-md w-96"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold mb-4">Do you want to store this bill on cloud?</h2>
+            <p className="mb-4">You can store the bill on cloud and then send it via WhatsApp to your customer.</p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowStoreModal(false)}
+                className="bg-gray-300 text-black px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleStoreBill}
+                className="bg-green-600 text-white px-4 py-2 rounded"
+              >
+                Store Bill
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showWhatsAppModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-80">
+            <h2 className="text-xl font-semibold mb-4">Send Bill via WhatsApp</h2>
+            <input
+              type="tel"
+              placeholder="Enter Mobile Number"
+              value={mobileNumber}
+              onChange={(e) => setMobileNumber(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md mb-4"
+            />
+            <div className="flex justify-end gap-4">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                onClick={() => setShowWhatsAppModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+                onClick={() => {
+                  const message = `Here is your bill: ${cloudinaryLink}`; // replace with actual Cloudinary URL
+                  const encodedMsg = encodeURIComponent(message);
+                  const formattedNumber = mobileNumber.replace(/\D/g, ""); // clean non-digits
+                  window.open(`https://wa.me/91${formattedNumber}?text=${encodedMsg}`, "_blank");
+                  setShowWhatsAppModal(false);
+                }}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

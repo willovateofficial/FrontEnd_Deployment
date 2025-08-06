@@ -52,6 +52,7 @@ const MainMenuPage = () => {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
 
   const handleStatusChange = (id: number, newStatus: boolean) => {
@@ -130,11 +131,18 @@ const MainMenuPage = () => {
       : true
   );
 
+  const searchFilteredDishes = filteredDishes.filter((dish) =>
+    dish.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="flex flex-col md:flex-row bg-white px-4 sm:px-6 md:px-10 lg:px-12 xl:px-16 2xl:px-20 overflow-hidden">
+    <div className="flex flex-col md:flex-row bg-white px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 overflow-hidden">
       <Sidebar onCategorySelect={(category) => setSelectedCategory(category)} />
       <div className="flex-1 flex flex-col px-4 md:px-8 py-6 overflow-hidden">
-        <MenuHeader selectedCategory={selectedCategory} />
+        <MenuHeader
+          selectedCategory={selectedCategory}
+          onSearch={(term) => setSearchTerm(term)}
+        />
         <div className="flex-1 mt-6 pr-2">
           {loading ? (
             <div>Loading menu...</div>
@@ -143,21 +151,22 @@ const MainMenuPage = () => {
               No dishes available for the selected category.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {filteredDishes.map((dish) => (
-                <div
+            <div
+              className="grid gap-6 transition-all duration-300"
+              style={{
+                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+              }}
+            >
+              {searchFilteredDishes.map((dish) => (
+                <DishCard
                   key={dish.id}
-                  className="w-full sm:w-[48%] md:w-[31%] lg:w-[23%] min-w-[220px]"
-                >
-                  <DishCard
-                    dish={dish}
-                    onEdit={() => handleEdit(dish)}
-                    onDelete={(id) =>
-                      setDishes(dishes.filter((d) => d.id !== id))
-                    }
-                    onStatusChange={handleStatusChange} // ✅ Add this line
-                  />
-                </div>
+                  dish={dish}
+                  onEdit={() => handleEdit(dish)}
+                  onDelete={(id) =>
+                    setDishes(dishes.filter((d) => d.id !== id))
+                  }
+                  onStatusChange={handleStatusChange}
+                />
               ))}
             </div>
           )}

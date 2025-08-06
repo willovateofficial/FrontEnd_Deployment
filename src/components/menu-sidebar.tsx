@@ -6,6 +6,7 @@ import { useCategories } from "../hooks/useCategory";
 import { baseUrl } from "../config";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../components/Loader";
 
 interface SidebarProps {
   onCategorySelect: (category: string) => void;
@@ -109,7 +110,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCategorySelect }) => {
     return (
       <li
         key={item.id}
-        className={`group px-4 py-2 rounded hover:bg-yellow-100 ${
+        className={`group px-2 py-2 rounded hover:bg-yellow-400 ${
           activeItem === item.name
             ? "bg-yellow-400 text-white font-semibold"
             : ""
@@ -150,7 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onCategorySelect }) => {
         ) : (
           <div className="flex justify-between items-center">
             <span
-              className="flex-1 cursor-pointer"
+              className="flex-1 cursor-pointer text-lg"
               onClick={() => handleSelect(item.name)}
             >
               {item.name}
@@ -179,10 +180,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onCategorySelect }) => {
 
   return (
     <>
+      {isAdding && <Loader/>}
       <aside className="w-full md:w-64 bg-white shadow-md md:p-4 p-2">
         <div className="md:hidden">
           <div
-            className="flex items-center justify-between bg-yellow-400 text-white px-4 py-2 rounded-full cursor-pointer"
+            className="flex items-center justify-between text-xl font-bold px-4 py-2 rounded-full cursor-pointer"
             onClick={() => setDropdownOpen(!dropdownOpen)}
           >
             <span>Category</span>
@@ -190,12 +192,18 @@ const Sidebar: React.FC<SidebarProps> = ({ onCategorySelect }) => {
           </div>
 
           {dropdownOpen && (
-            <ul className="mt-2 space-y-2">
-              {isLoading ? (
-                <li>Loading...</li>
-              ) : (
-                categories.map((item) => renderCategory(item))
-              )}
+            <ul className="mt-2 space-y-1">
+              {/*Add Button FIRST */}
+              <li>
+                <button
+                  onClick={() => setShowInput(true)}
+                  className="w-full bg-yellow-400 bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 focus:outline-none text-white py-1 rounded-full font-bold flex items-center justify-center gap-2"
+                >
+                  <span className="text-2xl">+</span> Add
+                </button>
+              </li>
+
+              {/*Input field (if Add is clicked) */}
               {showInput && (
                 <li className="mt-2">
                   <input
@@ -222,14 +230,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onCategorySelect }) => {
                   </button>
                 </li>
               )}
-              <li>
-                <button
-                  onClick={() => setShowInput(true)}
-                  className="mt-2 w-full bg-yellow-400 hover:bg-yellow-500 text-white py-2 rounded-full font-bold flex items-center justify-center gap-2"
-                >
-                  <span className="text-2xl">+</span> Add
-                </button>
-              </li>
+
+              {/*Category List */}
+              {isLoading ? (
+                <li>Loading...</li>
+              ) : (
+                categories.map((item) => renderCategory(item))
+              )}
             </ul>
           )}
         </div>
@@ -238,7 +245,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onCategorySelect }) => {
           className="hidden md:block"
           style={{ height: "calc(100vh - 64px)", overflowY: "auto" }}
         >
-          <h2 className="text-xl font-semibold mb-4">Category</h2>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-2xl font-bold">Category</h2>
+            <button
+              onClick={() => setShowInput(true)}
+              className="bg-yellow-400 bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 focus:outline-none transition text-white py-1 px-5 rounded-xl font-bold flex items-center gap-1"
+            >
+              <span className="text-xl">+</span> Add
+            </button>
+          </div>
 
           {showInput && (
             <div className="mb-4">
@@ -267,20 +282,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onCategorySelect }) => {
             </div>
           )}
 
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {isLoading ? (
               <li>Loading...</li>
             ) : (
               categories.map((item) => renderCategory(item))
             )}
           </ul>
-
-          <button
-            onClick={() => setShowInput(true)}
-            className="mt-6 w-full bg-yellow-400 hover:bg-yellow-500 text-white py-2 rounded-full font-bold flex items-center justify-center gap-2"
-          >
-            <span className="text-2xl">+</span> Add
-          </button>
         </div>
       </aside>
       <ToastContainer position="top-center" autoClose={1500} />

@@ -38,7 +38,7 @@ const OrderList: React.FC = () => {
     setOrders([]);
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
 
       // Build query parameters properly
       let queryParams = `?_=${Date.now()}`; // Cache busting

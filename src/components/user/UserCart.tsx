@@ -32,6 +32,7 @@ interface OrderData {
   total_amount: number;
   payment_method: string;
   estimated_time: string;
+  pointsUsed?: number;
 }
 
 interface UserCartProps {
@@ -63,10 +64,12 @@ const UserCart: React.FC<UserCartProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [tableNumber, setTableNumber] = useState<number>(1);
   const navigate = useNavigate();
-  const isLoggedIn = Boolean(localStorage.getItem("role"));
+  const isLoggedIn = Boolean(localStorage.getItem("customerToken"));
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [availablePoints, setAvailablePoints] = useState(0);
+  const [pointsToUse, setPointsToUse] = useState(0);
 
   useEffect(() => {
     const storedTableNumber = localStorage.getItem("table_number");
@@ -75,6 +78,25 @@ const UserCart: React.FC<UserCartProps> = ({
     }
     const isFromTrackOrderPage = !!orderId; // Only true if orderId prop is passed
     setIsEditing(isFromTrackOrderPage);
+
+    const customerToken = localStorage.getItem("customerToken");
+    if (customerToken) {
+      axios
+        .get(`${API_BASE_URL}/customers/customer`, {
+          headers: {
+            Authorization: `Bearer ${customerToken}`,
+          },
+        })
+        .then((res) => {
+          const customers = res.data;
+          const myId = localStorage.getItem("customerId");
+          const me = customers.find((c: any) => c.id === Number(myId));
+          if (me) setAvailablePoints(me.points || 0);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch points:", err);
+        });
+    }
 
     const currentOrderId = orderId;
     let existingItems: CartItem[] = [];
@@ -256,7 +278,7 @@ const UserCart: React.FC<UserCartProps> = ({
     (acc, item) => acc + item.price * item.quantity,
     0
   );
-  const finalAmount = Math.max(0, total - discountAmount);
+  const finalAmount = Math.max(0, total - discountAmount - pointsToUse);
 
   const handleOrderSubmit = async () => {
     if (cartItems.length === 0) {
@@ -282,18 +304,24 @@ const UserCart: React.FC<UserCartProps> = ({
       quantity: item.quantity,
       price: item.price,
       name: item.name,
-      status: item.status || "Pending", // ✅ Default to "Pending" if missing
+      status: item.status || "Pending",
     }));
 
     const businessId = Number(localStorage.getItem("businessId"));
-
-    const orderData: OrderData & { businessId: number | null } = {
-      businessId, // ✅ Add this line
+    const token = localStorage.getItem("customerToken"); // ✅ Get customer token
+    const customerId = localStorage.getItem("customerId"); // ✅ Get customerId if logged in
+    const orderData: OrderData & {
+      businessId: number | null;
+      customerId?: number;
+    } = {
+      businessId,
       table_number: tableNumber,
       cart_items,
       total_amount: finalAmount,
       payment_method: paymentMethod,
       estimated_time: "15 min",
+      pointsUsed: pointsToUse, // ✅ Add this line
+      ...(customerId && { customerId: parseInt(customerId) }),
     };
 
     const currentOrderId = orderId || localStorage.getItem("editOrderId");
@@ -302,9 +330,18 @@ const UserCart: React.FC<UserCartProps> = ({
       const response = currentOrderId
         ? await axios.put<OrderResponse>(
             `${API_BASE_URL}/orders/${currentOrderId}`,
-            orderData
+            orderData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`, // ✅ Include token here
+              },
+            }
           )
-        : await axios.post<OrderResponse>(`${API_BASE_URL}/orders`, orderData);
+        : await axios.post<OrderResponse>(`${API_BASE_URL}/orders`, orderData, {
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ Include token here
+            },
+          });
 
       if ([200, 201].includes(response.status)) {
         const newOrderId =
@@ -436,6 +473,27 @@ const UserCart: React.FC<UserCartProps> = ({
                 >
                   + Add New Item
                 </button>
+              </div>
+            )}
+
+            {isLoggedIn && availablePoints > 0 && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Use Loyalty Points ({availablePoints} available)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max={availablePoints}
+                  value={pointsToUse}
+                  onChange={(e) =>
+                    setPointsToUse(
+                      Math.min(availablePoints, Number(e.target.value) || 0)
+                    )
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Enter points to use"
+                />
               </div>
             )}
 

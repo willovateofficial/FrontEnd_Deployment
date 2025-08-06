@@ -50,30 +50,59 @@ const TableView: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-br from-orange-50 to-white -mt-4 -mb-10">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-extrabold text-orange-600 drop-shadow-sm">
-          Table Overview
-        </h2>
+    <div className="p-6 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 -mt-4 -mb-10">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
+        {/* Heading + Mobile Icon */}
+        <div className="flex items-center gap-9">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-orange-900">
+              Table Management
+            </h2>
+            <p className="text-gray-500 text-sm mt-1 hidden sm:block">
+              Manage your restaurant tables and booking status easily.
+            </p>
+          </div>
+
+          {/* Mobile Only Refresh Icon */}
+          <button
+            title="Refresh tables"
+            onClick={() => {
+              setRefreshing(true);
+              fetchTables();
+            }}
+            className="sm:hidden flex items-center justify-center w-9 h-9 rounded-full bg-orange-500 hover:bg-orange-600 text-white shadow-md transition"
+          >
+            <FiRefreshCw
+              className={`${refreshing ? "animate-spin" : ""} text-lg`}
+            />
+          </button>
+        </div>
+
+        {/* Desktop Refresh Button */}
         <button
           onClick={() => {
             setRefreshing(true);
             fetchTables();
           }}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-orange-600 bg-orange-100 rounded-full hover:bg-orange-200 transition border border-orange-300 shadow"
+          className="hidden sm:flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-full hover:from-orange-600 hover:to-orange-700 transition-all shadow-md"
         >
-          <FiRefreshCw className={refreshing ? "animate-spin" : ""} />
+          <FiRefreshCw className={`${refreshing ? "animate-spin" : ""}`} />
           Refresh
         </button>
       </div>
 
+      {/* Table Grid */}
+      {/* Table Grid */}
       {loading ? (
         <div className="text-gray-600 text-center mt-12">Loading tables...</div>
       ) : tables.length === 0 ? (
-        <div className="text-gray-500 text-center mt-12">No tables found.</div>
+        <div className="text-gray-400 text-center mt-16 text-lg font-medium">
+          📭 No tables found. Please generate tables first.
+        </div>
       ) : (
         <motion.div
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"
+          className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
           initial="hidden"
           animate="visible"
           variants={{
@@ -88,25 +117,35 @@ const TableView: React.FC = () => {
           {tables.map((table) => (
             <motion.div
               key={table.id}
-              className={`relative p-6 rounded-2xl shadow-xl text-center font-bold text-lg border-2 transition-all duration-300 hover:scale-105 backdrop-blur-md ${
+              className={`p-6 rounded-2xl shadow-lg text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
                 table.status === "Booked"
-                  ? "bg-red-50 border-red-400 text-red-700"
-                  : "bg-green-50 border-green-400 text-green-700"
+                  ? "bg-gradient-to-br from-red-50 to-red-100 border border-red-300"
+                  : "bg-gradient-to-br from-green-50 to-green-100 border border-green-300"
               }`}
               variants={{
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 },
               }}
             >
-              <div className="flex justify-center mb-2 text-2xl">
+              <div
+                className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center shadow ${
+                  table.status === "Booked" ? "bg-red-200" : "bg-green-200"
+                }`}
+              >
                 {table.status === "Booked" ? (
-                  <FaTimesCircle className="text-red-500" />
+                  <FaTimesCircle className="text-red-600 text-2xl" />
                 ) : (
-                  <FaCheckCircle className="text-green-500" />
+                  <FaCheckCircle className="text-green-600 text-2xl" />
                 )}
               </div>
-              <div>Table {table.tableNumber}</div>
-              <div className="text-sm mt-2 font-medium opacity-80">
+              <div className="text-xl font-semibold text-gray-800">
+                Table {table.tableNumber}
+              </div>
+              <div
+                className={`mt-1 font-medium ${
+                  table.status === "Booked" ? "text-red-600" : "text-green-600"
+                }`}
+              >
                 {table.status}
               </div>
             </motion.div>

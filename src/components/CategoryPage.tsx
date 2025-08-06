@@ -258,11 +258,11 @@ const CategoryPage = () => {
           {filteredItems.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-xl shadow-lg p-5 flex flex-col gap-4 hover:shadow-2xl hover:scale-[1.03] transition-transform duration-300"
+              className="bg-white rounded-xl shadow-lg p-5 flex flex-col gap-4 hover:shadow-2xl hover:scale-[1.01] transition-transform duration-300"
             >
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <h3 className="text-2xl font-bold text-gray-900">
                     {item.name}
                   </h3>
                   <div className="flex gap-1 text-lg mt-2">
@@ -272,7 +272,7 @@ const CategoryPage = () => {
                       </span>
                     ))}
                   </div>
-                  <p className="text-sm text-gray-800 leading-snug mt-3">
+                  <p className="text-md text-gray-800 leading-snug mt-3">
                     Spicy & Saucy! {item.description}
                   </p>
                 </div>
@@ -285,7 +285,7 @@ const CategoryPage = () => {
                   {item.isActive ? (
                     <button
                       onClick={() => handleAddClick(item)}
-                      className="absolute bottom-[-10px] left-1/2 transform -translate-x-1/2 text-xs font-bold text-green-700 border border-green-500 bg-white px-3 py-0.5 rounded-full shadow"
+                      className="absolute bottom-[-10px] left-1/2 transform -translate-x-1/2 text-md font-bold text-green-600 border border-green-500 bg-white px-3 py-0.5 rounded-full shadow"
                     >
                       ADD
                     </button>
@@ -314,9 +314,9 @@ const CategoryPage = () => {
                       </div>
                     </>
                   ) : (
-                    <div className="flex items-center px-4 py-2 text-sm font-bold text-black">
+                    <div className="flex items-center px-4 py-1 text-xl font-bold text-black">
                       1 Full
-                      <span className="ml-4 px-4 py-1 text-sm font-bold text-white bg-[#028643] rounded">
+                      <span className="ml-4 px-4 py-1 text-xl font-bold text-white bg-[#028643] rounded">
                         ₹{item.price}
                       </span>
                     </div>

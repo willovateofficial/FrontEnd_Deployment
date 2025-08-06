@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { baseUrl } from "../../config";
+import Loader from "../Loader"; // Assuming Loader is in the same directory
 
 interface User {
   id: number;
@@ -18,6 +19,8 @@ const roles = ["Manager", "Staff"];
 const PAGE_SIZE = 8;
 
 type FormMode = "add" | "edit";
+
+// ... (previous imports and interfaces remain unchanged)
 
 const UserManagement: React.FC<{}> = () => {
   const businessId = localStorage.getItem("businessId");
@@ -236,9 +239,9 @@ const UserManagement: React.FC<{}> = () => {
   return (
     <div className="min-h-screen bg-white p-4 sm:p-8 -mt-4 -mb-10">
       {/* Header */}
-      <header className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-4">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-orange-900">
-          User Management
+      <header className="max-w-6xl mx-auto flex flex-row justify-between items-center mb-4 sm:mb-6 gap-16 sm:flex-row sm:justify-between">
+        <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold text-orange-900">
+          Staff Management
         </h1>
         <button
           onClick={openAddUser}
@@ -282,9 +285,7 @@ const UserManagement: React.FC<{}> = () => {
       {/* Users Table */}
       <div className="max-w-6xl mx-auto bg-white rounded-lg sm:rounded-xl shadow overflow-x-auto relative">
         {loading ? (
-          <div className="p-6 text-center text-orange-600">
-            Loading users...
-          </div>
+          <Loader />
         ) : error ? (
           <div className="p-6 text-center text-red-600 font-semibold">
             {error}

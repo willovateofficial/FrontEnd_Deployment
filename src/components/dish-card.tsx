@@ -139,7 +139,7 @@ const DishCard: React.FC<DishCardProps> = ({
   return (
     <>
       <div
-        className={`relative rounded-2xl shadow-md p-4 flex flex-col items-center justify-between h-full w-[320px] mx-auto transition-all duration-300 transform hover:scale-[1.02] ${
+        className={`relative rounded-2xl shadow-md p-4 flex flex-col items-center h-full w-full min-w-[250px] max-w-[320px] mx-auto transition-all duration-300 transform hover:scale-[1.02] ${
           activeStatus
             ? "bg-yellow-50"
             : "bg-red-100 border-2 border-red-400 scale-[0.98]"
@@ -160,7 +160,7 @@ const DishCard: React.FC<DishCardProps> = ({
           <img
             src={dish.image}
             alt={dish.name}
-            className="h-28 w-28 sm:h-36 sm:w-36 object-cover rounded-full border-4 border-yellow-300"
+            className="h-28 w-28 sm:h-34 sm:w-34 object-cover rounded-full border-4 border-yellow-300"
           />
           {isFavorite && (
             <span className="absolute top-0 right-0 text-red-500 text-2xl">
@@ -201,8 +201,8 @@ const DishCard: React.FC<DishCardProps> = ({
         </div>
 
         {/* Status Toggle in top-left */}
-        <div className="absolute top-3 left-3 bg-white/80 backdrop-blur px-2 py-1 rounded-md shadow">
-          <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold">
+        <div className="absolute top-3 left-3 bg-white/80 backdrop-blur px-3 py-1 sm:px-1 sm:py-1 rounded-md shadow ">
+          <label className="flex items-center gap-3 sm:gap-1 text-xs sm:text-sm font-semibold sm:gap-1 ">
             <input
               type="checkbox"
               checked={activeStatus}

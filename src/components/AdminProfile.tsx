@@ -13,6 +13,7 @@ import {
   ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 import { baseUrl } from "../config";
+import BusinessWhatsappModal from "./BusinessWhatsappModal";
 
 const baseURL = baseUrl;
 
@@ -30,17 +31,18 @@ export default function ProfilePage() {
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string>("");
   const [originalData, setOriginalData] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [qrCode, setQrCode] = useState<File | null>(null);
+  const [qrPreviewUrl, setQrPreviewUrl] = useState<string>("");
+
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("Authorization token missing");
-        }
+        if (!token) throw new Error("Authorization token missing");
 
-        // For SuperAdmin (demo purposes)
         const payload = JSON.parse(atob(token.split(".")[1]));
         if (payload.role === "SuperAdmin") {
           const demoData = {
@@ -51,6 +53,7 @@ export default function ProfilePage() {
             business: {
               name: "Willovate Resto",
               plan: { name: "Enterprise Plan" },
+              qrCodeUrl: "/demo-qr.png",
             },
             profilePhotoUrl: "/admin-avatar.png",
           };
@@ -62,6 +65,7 @@ export default function ProfilePage() {
             businessName: demoData.business.name,
           });
           setPreviewPhotoUrl(demoData.profilePhotoUrl);
+          setQrPreviewUrl(demoData.business.qrCodeUrl);
           setOriginalData({
             ...demoData,
             businessName: demoData.business.name,
@@ -73,6 +77,8 @@ export default function ProfilePage() {
         const response = await axios.get(`${baseURL}/api/auth/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+
         const data = response.data;
         setUserData(data);
         setFormData({
@@ -82,6 +88,7 @@ export default function ProfilePage() {
           businessName: data.business?.name || "",
         });
         setPreviewPhotoUrl(data.profilePhotoUrl || "/default-avatar.png");
+        setQrPreviewUrl(data.business?.qrCodeUrl || ""); // ✅ Set existing QR preview
         setOriginalData({
           ...data,
           businessName: data.business?.name || "",
@@ -150,6 +157,7 @@ export default function ProfilePage() {
       if (formData.businessName !== originalData.businessName)
         updateData.append("businessName", formData.businessName);
       if (profilePhoto) updateData.append("profilePhoto", profilePhoto);
+      if (qrCode) updateData.append("qrCode", qrCode); // ✅ Add QR code to form
 
       await axios.put(`${baseURL}/api/auth/user`, updateData, {
         headers: { Authorization: `Bearer ${token}` },
@@ -157,11 +165,14 @@ export default function ProfilePage() {
 
       toast.success("Profile updated successfully");
       setIsEditing(false);
+
       // Refresh data
       const response = await axios.get(`${baseURL}/api/auth/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUserData(response.data);
+      const data = response.data;
+      setUserData(data);
+      setQrPreviewUrl(data.business?.qrCodeUrl || ""); // ✅ Update preview again
     } catch (error) {
       toast.error("Failed to update profile");
       console.error(error);
@@ -169,6 +180,29 @@ export default function ProfilePage() {
       setIsSaving(false);
     }
   };
+  const handleQrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      try {
+        const compressed = await imageCompression(file, {
+          maxSizeMB: 0.5,
+          maxWidthOrHeight: 800,
+        });
+        setQrCode(compressed);
+        setQrPreviewUrl(URL.createObjectURL(compressed));
+      } catch (error) {
+        toast.error("Failed to upload QR image");
+        console.error(error);
+      }
+    }
+  };
+  const qrSrc = qrPreviewUrl || userData?.qrCodeUrl || "";
+
+
+  if (!userData) {
+    return <div>Loading profile...</div>;
+  }
+
 
   if (loading) {
     return (
@@ -408,6 +442,12 @@ export default function ProfilePage() {
                           </p>
                         )}
                       </div>
+                      <button
+                        onClick={() => setShowModal(true)}
+                        className="flex items-center space-x-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 transition-all"
+                      >
+                        <span>Add WhatsApp Details</span>
+                      </button>
                       <div>
                         <label
                           htmlFor="address-input"
@@ -431,6 +471,33 @@ export default function ProfilePage() {
                           </p>
                         )}
                       </div>
+                      <div className="flex items-center space-x-4">
+                        <p className="text-sm font-medium">Your QR Code:</p>
+                        {qrSrc ? (
+                          <img
+                            src={qrSrc}
+                            alt="QR Code Preview"
+                            className="w-24 h-24 object-cover rounded border border-gray-300"
+                          />
+                        ) : (
+                          <div className="w-24 h-24 bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-500 rounded">
+                            QR Preview
+                          </div>
+                        )}
+                      </div>
+                      {isEditing && (
+                        <div className="mt-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Upload New QR Code
+                          </label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleQrUpload}
+                            className="w-full text-sm text-gray-700"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -453,6 +520,10 @@ export default function ProfilePage() {
         pauseOnHover
         toastClassName="rounded-lg shadow-lg"
       />
+      {/* Modal */}
+      {showModal && (
+        <BusinessWhatsappModal onClose={() => setShowModal(false)} />
+      )}
     </div>
   );
 }

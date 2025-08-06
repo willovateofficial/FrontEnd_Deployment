@@ -1,4 +1,4 @@
-import { axiosInstance } from '../../lib/axios';
+import { axiosInstance } from "../../lib/axios";
 
 export const loginFn = async ({
   email,
@@ -7,7 +7,7 @@ export const loginFn = async ({
   email: string;
   password: string;
 }) => {
-  const response = await axiosInstance.post('api/auth/login', {
+  const response = await axiosInstance.post("api/auth/login", {
     email,
     password,
   });
@@ -19,13 +19,12 @@ export const registerFn = async (payload: {
   email: string;
   business_name: string;
   business_type: string;
-  role : string;
+  role: string;
   phone: string;
   address: string;
   password: string;
 }) => {
-  const response = await axiosInstance.post('api/auth/register', 
-    payload);
+  const response = await axiosInstance.post("api/auth/register", payload);
 
-  return response.data
+  return response.data;
 };

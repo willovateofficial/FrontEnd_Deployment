@@ -1,96 +1,104 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  FaMobileAlt, 
-  FaQrcode, 
-  FaChartLine, 
-  FaPalette, 
-  FaCreditCard, 
+import {
+  FaMobileAlt,
+  FaQrcode,
+  FaChartLine,
+  FaPalette,
+  FaCreditCard,
   FaLaptop,
   FaArrowRight,
   FaArrowLeft,
   FaCheck,
   FaLightbulb,
   FaShieldAlt,
-  FaClock
+  FaClock,
 } from "react-icons/fa";
+import BookDemoPopup from "./BookDemoPopup"; // Import the reusable popup component
 
 const WhyChooseUs = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [showContactPopup, setShowContactPopup] = useState(false);
 
   const features = [
     {
       icon: <FaMobileAlt className="text-3xl" />,
       title: "One Click App",
-      description: "Instant access with zero setup required for your staff and customers",
+      description:
+        "Instant access with zero setup required for your staff and customers",
       benefits: [
         "70% faster onboarding",
         "No technical skills needed",
-        "Works on any smartphone"
+        "Works on any smartphone",
       ],
       stats: "95% adoption rate",
-      color: "from-amber-500 to-amber-600"
+      color: "from-amber-500 to-amber-600",
     },
     {
       icon: <FaQrcode className="text-3xl" />,
       title: "QR Solution",
-      description: "Contactless menu access that customers love and intuitively understand",
+      description:
+        "Contactless menu access that customers love and intuitively understand",
       benefits: [
         "25% faster table turnover",
         "Reduces menu printing costs",
-        "Easy to update menus"
+        "Easy to update menus",
       ],
       stats: "3.8/5 customer rating",
-      color: "from-orange-500 to-orange-600"
+      color: "from-orange-500 to-orange-600",
     },
     {
       icon: <FaChartLine className="text-3xl" />,
       title: "Dashboard Tracking",
-      description: "Real-time analytics that help you make data-driven decisions instantly",
+      description:
+        "Real-time analytics that help you make data-driven decisions instantly",
       benefits: [
         "Track sales in real-time",
         "Identify popular menu items",
-        "Monitor staff performance"
+        "Monitor staff performance",
       ],
       stats: "40% better decisions",
-      color: "from-red-500 to-red-600"
+      color: "from-red-500 to-red-600",
     },
     {
       icon: <FaPalette className="text-3xl" />,
       title: "Custom Branding",
-      description: "Fully personalized experience that matches your restaurant's unique identity",
+      description:
+        "Fully personalized experience that matches your restaurant's unique identity",
       benefits: [
         "Your logo and colors",
         "Custom menu layouts",
-        "Personalized notifications"
+        "Personalized notifications",
       ],
       stats: "2x brand recognition",
-      color: "from-amber-400 to-amber-500"
+      color: "from-amber-400 to-amber-500",
     },
     {
       icon: <FaCreditCard className="text-3xl" />,
       title: "Payment Integration",
-      description: "Secure, multi-platform payments that customers trust and prefer",
+      description:
+        "Secure, multi-platform payments that customers trust and prefer",
       benefits: [
         "All major payment methods",
         "Instant transaction records",
-        "Fraud protection"
+        "Fraud protection",
       ],
       stats: "99.9% success rate",
-      color: "from-orange-400 to-orange-500"
+      color: "from-orange-400 to-orange-500",
     },
     {
       icon: <FaLaptop className="text-3xl" />,
       title: "Multi-Device Access",
-      description: "Manage your restaurant from any device, anywhere with full control",
+      description:
+        "Manage your restaurant from any device, anywhere with full control",
       benefits: [
         "Desktop, tablet & mobile",
         "Real-time sync across devices",
-        "Role-based access control"
+        "Role-based access control",
       ],
       stats: "100% accessibility",
-      color: "from-red-400 to-red-500"
-    }
+      color: "from-red-400 to-red-500",
+    },
   ];
 
   const nextFeature = () => {
@@ -116,7 +124,8 @@ const WhyChooseUs = () => {
           </span>
         </h2>
         <p className="text-gray-600 max-w-3xl mx-auto">
-          Comprehensive solutions that streamline operations while enhancing customer experience
+          Comprehensive solutions that streamline operations while enhancing
+          customer experience
         </p>
       </div>
 
@@ -146,10 +155,11 @@ const WhyChooseUs = () => {
                 {features[activeIndex].description}
               </p>
               <div className="bg-white/20 px-3 py-2 rounded-lg inline-block text-sm">
-                <span className="font-semibold">Key Stat:</span> {features[activeIndex].stats}
+                <span className="font-semibold">Key Stat:</span>{" "}
+                {features[activeIndex].stats}
               </div>
             </div>
-            
+
             {/* Benefits List */}
             <div className="w-full lg:w-1/2 h-1/2 lg:h-full flex flex-col justify-center p-4 lg:p-8">
               <h4 className="font-semibold mb-3 flex items-center">
@@ -168,14 +178,14 @@ const WhyChooseUs = () => {
         </motion.div>
 
         {/* Navigation Controls */}
-        <button 
+        <button
           onClick={prevFeature}
           className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
           title="Previous Feature"
         >
           <FaArrowLeft className="text-gray-700 text-sm" />
         </button>
-        <button 
+        <button
           onClick={nextFeature}
           className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
           title="Next Feature"
@@ -189,7 +199,9 @@ const WhyChooseUs = () => {
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
-              className={`w-2 h-2 rounded-full ${activeIndex === index ? 'bg-white' : 'bg-white/50'} transition-colors`}
+              className={`w-2 h-2 rounded-full ${
+                activeIndex === index ? "bg-white" : "bg-white/50"
+              } transition-colors`}
               title="Switch to feature"
             />
           ))}
@@ -198,7 +210,7 @@ const WhyChooseUs = () => {
 
       {/* Additional Value Props */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <motion.div 
+        <motion.div
           whileHover={{ y: -5 }}
           className="bg-gray-50 p-6 rounded-xl border border-gray-200"
         >
@@ -209,11 +221,12 @@ const WhyChooseUs = () => {
             <h3 className="font-bold text-gray-900">Time Savings</h3>
           </div>
           <p className="text-gray-600 text-sm">
-            Reduce staff workload by 30% with automated ordering and payment processes
+            Reduce staff workload by 30% with automated ordering and payment
+            processes
           </p>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           whileHover={{ y: -5 }}
           className="bg-gray-50 p-6 rounded-xl border border-gray-200"
         >
@@ -227,8 +240,8 @@ const WhyChooseUs = () => {
             Bank-level encryption protects all transactions and customer data
           </p>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           whileHover={{ y: -5 }}
           className="bg-gray-50 p-6 rounded-xl border border-gray-200"
         >
@@ -255,30 +268,40 @@ const WhyChooseUs = () => {
               <h3 className="font-bold text-gray-900">What Our Clients Say</h3>
             </div>
             <p className="text-gray-700 italic mb-4">
-              "WillovateResto transformed our operations completely. Our table turnover increased by 25% and customer complaints dropped to zero. The dashboard gives me real-time insights I never had before."
+              "WillovateResto transformed our operations completely. Our table
+              turnover increased by 25% and customer complaints dropped to zero.
+              The dashboard gives me real-time insights I never had before."
             </p>
             <div className="text-sm">
               <p className="font-semibold">Rajesh Mehta</p>
               <p className="text-gray-600">Owner, Spice Garden Restaurant</p>
             </div>
           </div>
-          
+
           <div className="md:w-1/2 flex flex-col justify-center">
-            <h3 className="font-bold text-gray-900 mb-3">Ready to Experience the Difference?</h3>
+            <h3 className="font-bold text-gray-900 mb-3">
+              Ready to Experience the Difference?
+            </h3>
             <p className="text-gray-600 mb-5">
-              Join 500+ restaurants revolutionizing their service with our platform
+              Join 500+ restaurants revolutionizing their service with our
+              platform
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
-              <button className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-medium py-2 px-6 rounded-lg shadow hover:shadow-md transition-all">
+              <button
+                className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-medium py-2 px-6 rounded-lg shadow hover:shadow-md transition-all"
+                onClick={() => setShowContactPopup(true)}
+              >
                 Request Demo
-              </button>
-              <button className="border border-gray-300 text-gray-700 font-medium py-2 px-6 rounded-lg hover:bg-gray-50 transition-all">
-                Contact Sales
               </button>
             </div>
           </div>
         </div>
       </div>
+      {/* Reusable Popup */}
+      <BookDemoPopup
+        isOpen={showContactPopup}
+        onClose={() => setShowContactPopup(false)}
+      />
     </section>
   );
 };

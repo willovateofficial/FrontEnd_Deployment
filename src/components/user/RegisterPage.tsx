@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import FoodImg from "../../assets/food-img.jpg";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../config";
 
 interface RegisterPageProps {
   onClose?: () => void;
@@ -17,20 +18,22 @@ interface RegisterFormData {
   confirmPassword: string;
 }
 
+const baseURL = baseUrl;
+
 const RegisterPage: React.FC<RegisterPageProps> = ({ onClose }) => {
   const { register, handleSubmit, reset } = useForm<RegisterFormData>();
   const navigate = useNavigate();
 
-  const onSubmit = async (data: RegisterFormData) => {
-    const businessId = 1; // 🔁 Replace this with dynamic businessId if needed
+  const businessId = Number(localStorage.getItem("businessId"));
 
+  const onSubmit = async (data: RegisterFormData) => {
     if (data.password !== data.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
 
     try {
-      await axios.post("http://localhost:4000/api/customers/register", {
+      await axios.post(`${baseURL}/api/customers/register`, {
         name: data.name,
         email: data.email,
         mobile: data.mobile,
