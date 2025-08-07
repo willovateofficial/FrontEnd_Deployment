@@ -34,7 +34,7 @@ const BookDemoPopup: React.FC<BookDemoPopupProps> = ({ isOpen, onClose }) => {
         {/* Contact Info */}
         <div className="space-y-3 text-gray-800">
           <div>
-            <span className="font-medium">Phone:</span> +91 98765 43210
+            <span className="font-medium">Phone:</span> +91 9518769620
           </div>
           <div>
             <span className="font-medium">Email:</span> admin@willovate.in
