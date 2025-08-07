@@ -5,6 +5,7 @@ import bgImage from "../assets/restaurant-bg.jpg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../components/Loader";
+import { frontEndbaseUrl, baseUrl } from "../config";
 
 const GenerateBarcodePage: React.FC = () => {
   const [tableNumber, setTableNumber] = useState("");
@@ -12,7 +13,6 @@ const GenerateBarcodePage: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
   const restaurantName = localStorage.getItem("business_name");
 
   const handleGenerate = () => {
@@ -54,7 +54,7 @@ const GenerateBarcodePage: React.FC = () => {
         const encryptedPath = encrypt(rawPath);
         if (!encryptedPath) throw new Error("Encryption failed");
 
-        const url = `${baseUrl}/r/${encodeURIComponent(encryptedPath)}`;
+        const url = `${frontEndbaseUrl}/r/${encodeURIComponent(encryptedPath)}`;
         setQrUrl(url);
         toast.success("QR Code generated successfully!", {
           position: "top-center",
