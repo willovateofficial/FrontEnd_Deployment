@@ -4,7 +4,7 @@ import { decrypt } from "../utils/crypto-utils";
 import axios from "axios";
 import { frontEndbaseUrl, baseUrl } from "../config"; // Adjust the import path as
 
-const baseURL = baseUrl;
+const baseURL = "https://front-end-deployment-testing.vercel.app";
 
 const QrRedirect = () => {
   const navigate = useNavigate();
