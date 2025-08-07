@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { decrypt } from "../utils/crypto-utils";
 import axios from "axios";
-import { baseUrl } from "../config"; // Adjust the import path as necessary
+import { frontEndbaseUrl, baseUrl } from "../config"; // Adjust the import path as
 
 const baseURL = baseUrl;
 
