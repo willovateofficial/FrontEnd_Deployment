@@ -11,7 +11,6 @@ const GenerateBarcodePage: React.FC = () => {
   const [tableNumber, setTableNumber] = useState("");
   const [qrUrl, setQrUrl] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const restaurantName = localStorage.getItem("business_name");
 
@@ -66,33 +65,6 @@ const GenerateBarcodePage: React.FC = () => {
         setIsGenerating(false);
       }
     }, 300);
-  };
-
-  const handleCopy = () => {
-    if (!qrUrl) {
-      toast.error("No URL to copy", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "light",
-      });
-      return;
-    }
-    navigator.clipboard.writeText(qrUrl);
-    setCopied(true);
-    toast.info("QR Code URL copied to clipboard!", {
-      position: "top-center",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "light",
-    });
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const handlePrint = () => {
@@ -205,27 +177,6 @@ const GenerateBarcodePage: React.FC = () => {
                   <p className="text-xs text-gray-500 mt-4">
                     Scan this QR code to access the table
                   </p>
-                </div>
-
-                <div className="relative">
-                  <div className="text-sm font-medium text-gray-700 mb-1">
-                    QR Code URL
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="text"
-                      value={qrUrl}
-                      readOnly
-                      placeholder="QR Code URL"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg text-xs truncate"
-                    />
-                    <button
-                      onClick={handleCopy}
-                      className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-r-lg transition-colors"
-                    >
-                      {copied ? "Copied!" : "Copy"}
-                    </button>
-                  </div>
                 </div>
 
                 <button
